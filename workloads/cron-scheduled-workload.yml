@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-reverse-proxy
+  labels:
+    app: cron-scheduled-workload
+spec:
+  selector:
+    matchLabels:
+      app: cron-scheduled-workload
+  template:
+    metadata:
+      labels:
+        app: cron-scheduled-workload
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+apiVersion: keda.sh/v1alpha1 
+kind: ScaledObject
+metadata:
+  name: cron-scheduled-autoscaling
+  labels:
+    app: cron-scheduled-workload
+spec:
+  scaleTargetRef:
+    name: nginx-reverse-proxy
+  minReplicaCount: 5
+  triggers:
+    # Autoscale based on CRON expressions
+    # See: https://keda.sh/docs/latest/scalers/cron/
+  - type: cron
+    metadata:
+      # Required
+      timezone: Asia/Kolkata  # The acceptable values would be a value from the IANA Time Zone Database.
+      start: 30 * * * *       # Every hour on the 30th minute
+      end: 45 * * * *         # Every hour on the 45th minute
+      desiredReplicas: "10"
