@@ -1,2 +1,3 @@
-# GitHub Template
-GitHub template for all my future GitHub repos
+# Kubernetes Playground 🔱
+
+Collection of small apps running on my Kubernetes playground cluster. 🤹‍♂️
